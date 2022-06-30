@@ -1,0 +1,47 @@
+---
+title: "Piero Palacios Bernuy"
+image: piero.jpg
+about:
+  template: trestles
+  links:
+    - icon: envelope
+      text: Email
+      href: mailto:p.palacios.bernuy@gmail.com
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/in/piero-palacios-bernuy-30209087/
+    - icon: github
+      text: Github
+      href: https://github.com/pipaber?tab=repositories
+---
+
+<center>
+
+::: {.btn-group role="group" aria-label="About"}
+<a href="about.html"> <button type="button" class="btn btn-primary me-md-2 btn-sm">English</button></a> <a href="about_es.html"> <button type="button" class="btn btn-primary me-md-2 btn-sm">Spanish</button></a>
+:::
+
+</center>
+
+::: {#hero-heading}
+Hola! Mi nombre es Piero y soy profesional en biotecnología de Perú 🇵🇪 🦙.
+
+Tengo especializaciones en el análisis de datos y bioinformática de las universidades de Harvad y MIT.
+
+## Experiencia
+
+Diseños experimentales \| Análisis y modelamiento estadístico de datos \| R \| Python \| Galaxy \| High Performance Computing (HPC) \| Manejos de datos NGS
+
+Cultivo in vitro \| Microbiología \| Análisis por PCR en tiempo real \| Análisis de datos genómicos (ADN) \| Análisis transcriptómico de plantas por RNA-Seq.
+:::
+
+Este blog está hecho con [Quarto](https://quarto.org/) y desarrollado con [Netlify](https://www.netlify.com/). Los artículos de este blog son desarrollados bajo la licencia internacional [Creative Commons Atribución-ShareAlike 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
+
+Si te ha sido de ayuda mi blog, puedes comprarme un ¡café!.
+
+<center>
+
+```{=html}
+<script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="pipaber" data-color="#5F7FFF" data-emoji=""  data-font="Cookie" data-text="Comprarme un café" data-outline-color="#000000" data-font-color="#ffffff" data-coffee-color="#FFDD00" ></script>
+```
+</center>

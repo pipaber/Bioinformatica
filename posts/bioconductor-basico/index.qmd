@@ -44,7 +44,7 @@ Dicho en otras palabras, Bioconductor es similar al repositorio de paquetes de R
 
 Cabe resaltar que la reproducibilidad de resultados en biología es un reto y, tener *softwares* enfocados en ayudar a aliviar ese problema, es un gran avance para las ciencias biológicas.
 
-En fin, como ya te habrás percatado, este *post* es una pequeña introducción a los rangos genómicos asi que ¡vamos al asunto!
+En fin, como ya te habrás percatado por el título, este *post* es una pequeña introducción a los rangos genómicos asi que ¡vamos al asunto!
 
 ## Rangos genómicos
 
@@ -52,7 +52,7 @@ Los pares de bases del ADN son enumerados del 1 hasta un número grande (podría
 
 Dicho esto, ya podemos definir qué es un rango genómico. Un rango genómico es simplemente una región del ADN delimitada por dos números enteros o "coordenadas genómicas" que son de un interés específico para el investigador.
 
-Ahora bien, trabajaremos esta introducción a los rangos genómicos con datos provenientes de un experimento de precipitación de inmuno cromatina (ChIP-Seq). Esta técnica tiene por objetivo secuenciar regiones específicas del genoma que son sitios de unión de proteínas como factores de transcripción.
+Ahora bien, trabajaremos esta serie de artículos a los rangos genómicos con datos inventados y con datos provenientes de un experimento de precipitación de inmuno cromatina (ChIP-Seq). Esta técnica tiene por objetivo secuenciar regiones específicas del genoma que son sitios de unión de proteínas como factores de transcripción.
 
 La pregunta siguiente sería: ¿Para qué nos sirve secuenciar éstas regiones? La respuesta dicha de manera resumida es: "depende". Si lo sé, nada científico. Lo que sucede es que dependen del objetivo, por ejemplo: estudiar el cáncer de mama o efectos en el sabor del plátano. Para el caso del cáncer, es de interés encontrar a los *genes cercanos* a éstas regiones, ya que pueden ser motivo de tratamientos o cura. Es ahí donde entran los rangos genómicos al conocer la ubicación estas regiones cercanas a los genes.
 
@@ -76,7 +76,7 @@ Psdt: El material que se discutirá está inspirado en el libro online [Data ana
 library(IRanges) # carguemos el paquete
 ```
 
-La primera función que estudiaremos es `IRanges()`. La función tiene tres argumentos principales: inicio (*start*), fin (*end*) y ancho (*width*). Por ejemplo, si definimos un rango $[8,14] = 8,9,10,11,12,13,14$ tandrá un ancho o *width* de siete números.
+La primera función que estudiaremos es `IRanges()`. La función tiene tres argumentos principales: inicio (*start*), fin (*end*) y ancho (*width*). Por ejemplo, si definimos un rango $[8,14] = 8,9,10,11,12,13,14$ este tendrá un ancho o *width* de siete números.
 
 ```{r}
 #| echo: true
@@ -231,7 +231,7 @@ mcols(gr)$value<-NULL
 gr
 ```
 
-En el siguiente artículo discutiremos más sobre la clase *GRanges*. Veremos la clase *GRangesList* donde formaremos listas de rangos genómicos, operaciones sobre estas listas, aplicaciones en datos reales y le daremos sentido biológico a las operaciones de la clase *IRanges*.
+En el siguiente artículo discutiremos más sobre la clase *GRanges*. Veremos la clase *GRangesList* donde formaremos listas de rangos genómicos, operaciones sobre estas listas, aplicaciones en datos reales de ChIP-Seq y le daremos sentido biológico a las operaciones de la clase *IRanges*.
 
 
 

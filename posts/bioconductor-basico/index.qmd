@@ -3,7 +3,7 @@ title: "Bioconductor básico"
 subtitle: "Introducción a Genomic Ranges"
 author: "Piero Palacios Bernuy"
 description: "Una pequeña introducción a los rangos genómicos"
-date: "2022-06-12"
+date: "2022-07-12"
 toc: true
 categories: [news, code, analysis, Bioconductor]
 image: "babyyoda.jpg"

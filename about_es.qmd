@@ -37,11 +37,8 @@ Cultivo in vitro \| Microbiología \| Análisis por PCR en tiempo real \| Análi
 
 Este blog está hecho con [Quarto](https://quarto.org/) y desarrollado con [Netlify](https://www.netlify.com/). Los artículos de este blog son desarrollados bajo la licencia internacional [Creative Commons Atribución-ShareAlike 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
 
-Si te ha sido de ayuda mi blog, puedes comprarme un ¡café!.
+Si te ha sido de ayuda mi blog, puedes comprarme un ¡café!
 
 <center>
-
-```{=html}
-<script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="pipaber" data-color="#5F7FFF" data-emoji=""  data-font="Cookie" data-text="Comprarme un café" data-outline-color="#000000" data-font-color="#ffffff" data-coffee-color="#FFDD00" ></script>
-```
+<script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Cómprame un café', '#27ba42', 'X8X1DJSXY');kofiwidget2.draw();</script> 
 </center>

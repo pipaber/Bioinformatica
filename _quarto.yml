@@ -7,9 +7,9 @@ website:
     right:
       - about.qmd
       - icon: github
-        href: https://github.com/
-      - icon: twitter
-        href: https://twitter.com
+        href: https://github.com/pipaber?tab=repositories
+      - icon: linkedin
+        href: https://www.linkedin.com/in/piero-palacios-bernuy-30209087/
 format:
   html:
     theme: superhero

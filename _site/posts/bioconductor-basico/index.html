@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-0.9.483">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Piero Palacios Bernuy">
+<meta name="dcterms.date" content="2022-06-12">
+<meta name="description" content="Una pequeña introducción a los rangos genómicos">
+
+<title>Bioinformatica - Bioconductor básico</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../styles.css">
+<script src="..\..\site_libs\quarto-nav\quarto-nav.js"></script>
+<script src="..\..\site_libs\quarto-nav\headroom.min.js"></script>
+<script src="..\..\site_libs\clipboard\clipboard.min.js"></script>
+<script src="..\..\site_libs\quarto-search\autocomplete.umd.js"></script>
+<script src="..\..\site_libs\quarto-search\fuse.min.js"></script>
+<script src="..\..\site_libs\quarto-search\quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="..\..\site_libs\quarto-html\quarto.js"></script>
+<script src="..\..\site_libs\quarto-html\popper.min.js"></script>
+<script src="..\..\site_libs\quarto-html\tippy.umd.min.js"></script>
+<script src="..\..\site_libs\quarto-html\anchor.min.js"></script>
+<link href="..\..\site_libs\quarto-html\tippy.css" rel="stylesheet">
+<link href="..\..\site_libs\quarto-html\quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="..\..\site_libs\bootstrap\bootstrap.min.js"></script>
+<link href="..\..\site_libs\bootstrap\bootstrap-icons.css" rel="stylesheet">
+<link href="..\..\site_libs\bootstrap\bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Bioinformatica</span>
+  </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">Piero Palacios Bernuy</a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/pipaber?tab=repositories"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/piero-palacios-bernuy-30209087/"><i class="bi bi-linkedin" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Bioconductor básico</h1>
+            <p class="subtitle lead">Introducción a Genomic Ranges</p>
+                  <div>
+        <div class="description">
+          Una pequeña introducción a los rangos genómicos
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">news</div>
+                <div class="quarto-category">code</div>
+                <div class="quarto-category">analysis</div>
+                <div class="quarto-category">Bioconductor</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Piero Palacios Bernuy </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">June 12, 2022</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#bienvenidos" id="toc-bienvenidos" class="nav-link active" data-scroll-target="#bienvenidos">¡Bienvenidos!</a></li>
+  <li><a href="#rangos-genómicos" id="toc-rangos-genómicos" class="nav-link" data-scroll-target="#rangos-genómicos">Rangos genómicos</a></li>
+  <li><a href="#paquete-iranges" id="toc-paquete-iranges" class="nav-link" data-scroll-target="#paquete-iranges">Paquete IRanges</a>
+  <ul class="collapse">
+  <li><a href="#operaciones-intra-rangos" id="toc-operaciones-intra-rangos" class="nav-link" data-scroll-target="#operaciones-intra-rangos">Operaciones intra-rangos</a></li>
+  <li><a href="#operaciones-inter-rangos" id="toc-operaciones-inter-rangos" class="nav-link" data-scroll-target="#operaciones-inter-rangos">Operaciones inter-rangos</a></li>
+  </ul></li>
+  <li><a href="#rangos-genómicos-1" id="toc-rangos-genómicos-1" class="nav-link" data-scroll-target="#rangos-genómicos-1">Rangos genómicos</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="bienvenidos" class="level2">
+<h2 class="anchored" data-anchor-id="bienvenidos">¡Bienvenidos!</h2>
+<p>Mi nombre es Piero Palacios, y esta es la primera de una serie de publicaciones que se enfocarán en enseñar los paquetes básicos de Bioconductor para el análisis genómico. Puedes leer más acerca de mí en la sección: <a href="../../about.html">Acerca de mí</a>.</p>
+<p>Lo primero que puede pasar por tu mente es: ¿Y qué es <a href="https://www.bioconductor.org/">Bioconductor</a>? ¿Para qué me serviría aprender sobre Bioconductor?</p>
+<p>Bueno, si eres biólogo o trabajas con datos biológicos créeme que te va a servir <strong>bastante</strong>.</p>
+<p>Ahora bien, la página web de Bioconductor nos dice lo siguiente:</p>
+<p>“La misión del proyecto Bioconductor es desarrollar, apoyar y difundir software libre de código abierto que facilite el análisis riguroso y reproducible de datos de ensayos biológicos actuales y emergentes. Estamos dedicados a construir una comunidad diversa, colaborativa y acogedora de desarrolladores y científicos de datos.”</p>
+<p>Dicho en otras palabras, Bioconductor es similar al repositorio de paquetes de R, con la diferencia de que es un repositorio de <em>softwares</em> creado para el análisis de datos biológicos con enfoque en la reproducibilidad del análisis.</p>
+<p>Cabe resaltar que la reproducibilidad de resultados en biología es un reto y, tener <em>softwares</em> enfocados en ayudar a aliviar ese problema, es un gran avance para las ciencias biológicas.</p>
+<p>En fin, como ya te habrás percatado, este <em>post</em> es una pequeña introducción a los rangos genómicos asi que ¡vamos al asunto!</p>
+</section>
+<section id="rangos-genómicos" class="level2">
+<h2 class="anchored" data-anchor-id="rangos-genómicos">Rangos genómicos</h2>
+<p>Los pares de bases del ADN son enumerados del 1 hasta un número grande (podría ser más de 3 millones dependiendo de la especie). Estas enumeraciones nos ayudan a situarnos en regiones genómicas de interés como genes, regiones promotoras, regiones no codificantes, etc.</p>
+<p>Dicho esto, ya podemos definir qué es un rango genómico. Un rango genómico es simplemente una región del ADN delimitada por dos números enteros o “coordenadas genómicas” que son de un interés específico para el investigador.</p>
+<p>Ahora bien, trabajaremos esta introducción a los rangos genómicos con datos provenientes de un experimento de precipitación de inmuno cromatina (ChIP-Seq). Esta técnica tiene por objetivo secuenciar regiones específicas del genoma que son sitios de unión de proteínas como factores de transcripción.</p>
+<p>La pregunta siguiente sería: ¿Para qué nos sirve secuenciar éstas regiones? La respuesta dicha de manera resumida es: “depende”. Si lo sé, nada científico. Lo que sucede es que dependen del objetivo, por ejemplo: estudiar el cáncer de mama o efectos en el sabor del plátano. Para el caso del cáncer, es de interés encontrar a los <em>genes cercanos</em> a éstas regiones, ya que pueden ser motivo de tratamientos o cura. Es ahí donde entran los rangos genómicos al conocer la ubicación estas regiones cercanas a los genes.</p>
+<p>Antes de empezar a explorar los paquetes de Bioconductor, necesitamos instalarlos:</p>
+<p><code>BiocManager::install("IRanges")</code> <code>BiocManager::install("GenomicRanges")</code> <code>BiocManager::install("genomicsclass/ERBS")</code> <code>install_github("genomicsclass/ph525x")</code></p>
+<p>En caso no tengas instalado Bioconductor, puedes instalarlo como lo mencionan en su página web: <a href="https://www.bioconductor.org/install/">Instalar bioconductor</a></p>
+<p>Hecho lo anterior, primero revisaremos el paquete <code>IRanges</code> el cual es la base del paquete <code>GenomicRanges</code>.</p>
+<p>Psdt: El material que se discutirá está inspirado en el libro online <a href="http://genomicsclass.github.io/book/pages/bioc1_igranges.html">Data analysis for genomics</a> de Rafael Irrizary y Michael Love. ¡Te recomiendo revisarlo!</p>
+</section>
+<section id="paquete-iranges" class="level2">
+<h2 class="anchored" data-anchor-id="paquete-iranges">Paquete IRanges</h2>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-1_88eace97bbf2ee73eea3a8b481af0203">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(IRanges) <span class="co"># carguemos el paquete</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>La primera función que estudiaremos es <code>IRanges()</code>. La función tiene tres argumentos principales: inicio (<em>start</em>), fin (<em>end</em>) y ancho (<em>width</em>). Por ejemplo, si definimos un rango <span class="math inline">\([8,14] = 8,9,10,11,12,13,14\)</span> tandrá un ancho o <em>width</em> de siete números.</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-2_227765570ef3509bb752a667ac933e7a">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>rango<span class="ot">&lt;-</span> <span class="fu">IRanges</span>(<span class="dv">8</span>,<span class="dv">14</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>rango</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>IRanges object with 1 range and 0 metadata columns:
+          start       end     width
+      &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;
+  [1]         8        14         7</code></pre>
+</div>
+</div>
+<p>Podemos extraer información como el inicio, el final y el ancho:</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-3_7bff026cddbba56faa004227834ae2e6">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">start</span>(rango)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 8</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">end</span>(rango)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 14</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">width</span>(rango)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 7</code></pre>
+</div>
+</div>
+<p>También podemos definir varios rangos al mismo tiempo:</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-4_9fda73b76b042f08eb85777ac98ab12f">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">IRanges</span>(<span class="at">start =</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">7</span>),<span class="at">end =</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">15</span>,<span class="dv">14</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>IRanges object with 3 ranges and 0 metadata columns:
+          start       end     width
+      &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;
+  [1]         2        10         9
+  [2]         4        15        12
+  [3]         7        14         8</code></pre>
+</div>
+</div>
+<section id="operaciones-intra-rangos" class="level3">
+<h3 class="anchored" data-anchor-id="operaciones-intra-rangos">Operaciones intra-rangos</h3>
+<p>Las operaciones intra-rangos funcionan sobre cada rango de manera independiente.Entre las operaciones intra-rangos podemos mencionar a <em>narrow, shift, flank y resize</em>. Existen otras operaciones intra-rangos que pueden verse en la ayuda <code>?intra-range-methods</code>.</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-5_bfd217e8f6d79ecd8a1476eb2430651f">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rafalib)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mypar</span>(<span class="dv">7</span>,<span class="dv">1</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">narrow</span>(rango,<span class="at">start =</span> <span class="dv">3</span>) <span class="co"># encoge el rango desde el inicio</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>IRanges object with 1 range and 0 metadata columns:
+          start       end     width
+      &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;
+  [1]        10        14         5</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotRanges</span>(rango,<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">18</span>))</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plotRanges</span>(<span class="fu">narrow</span>(rango,<span class="at">start =</span> <span class="dv">3</span>),<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">18</span>),<span class="at">col=</span><span class="st">"midnightblue"</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">shift</span>(rango,<span class="at">shift =</span> <span class="sc">-</span><span class="dv">3</span>) <span class="co"># mover el rango 3 pares de bases a la izquierda</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>IRanges object with 1 range and 0 metadata columns:
+          start       end     width
+      &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;
+  [1]         5        11         7</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotRanges</span>(<span class="fu">shift</span>(rango,<span class="at">shift =</span> <span class="sc">-</span><span class="dv">3</span>),<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">18</span>),<span class="at">col=</span><span class="st">"midnightblue"</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="fu">flank</span>(rango,<span class="at">width =</span> <span class="dv">3</span>,<span class="at">start =</span> T,<span class="at">both =</span> F) <span class="co"># rodea el rango con 3 pares de bases a partir del inicio</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>IRanges object with 1 range and 0 metadata columns:
+          start       end     width
+      &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;
+  [1]         5         7         3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotRanges</span>(<span class="fu">flank</span>(rango,<span class="at">width =</span> <span class="dv">3</span>,<span class="at">start =</span> T,<span class="at">both =</span> F),<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">18</span>),<span class="at">col=</span><span class="st">"midnightblue"</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">flank</span>(rango,<span class="at">width =</span> <span class="dv">3</span>,<span class="at">start =</span> F,<span class="at">both =</span> F) <span class="co"># rodea el rango con 3 pares de bases a partir del final</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>IRanges object with 1 range and 0 metadata columns:
+          start       end     width
+      &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;
+  [1]        15        17         3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotRanges</span>(<span class="fu">flank</span>(rango,<span class="at">width =</span> <span class="dv">3</span>,<span class="at">start =</span> F,<span class="at">both =</span> F),<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">18</span>),<span class="at">col=</span><span class="st">"midnightblue"</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">flank</span>(rango,<span class="at">width =</span> <span class="dv">3</span>,<span class="at">start =</span> T,<span class="at">both =</span> T) <span class="co"># rodea el rango con 3 pares de bases para la izquierda y para la derecha a partir del inicio</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>IRanges object with 1 range and 0 metadata columns:
+          start       end     width
+      &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;
+  [1]         5        10         6</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotRanges</span>(<span class="fu">flank</span>(rango,<span class="at">width =</span> <span class="dv">3</span>,<span class="at">start =</span> T,<span class="at">both =</span> T),<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">18</span>),<span class="at">col=</span><span class="st">"midnightblue"</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">resize</span>(rango,<span class="at">width =</span> <span class="dv">1</span>) <span class="co"># redimensiona el rango a una base.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>IRanges object with 1 range and 0 metadata columns:
+          start       end     width
+      &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;
+  [1]         8         8         1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotRanges</span>(<span class="fu">resize</span>(rango,<span class="at">width =</span> <span class="dv">1</span>),<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">18</span>),<span class="at">col=</span><span class="st">"midnightblue"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="1440"></p>
+</div>
+</div>
+</section>
+<section id="operaciones-inter-rangos" class="level3">
+<h3 class="anchored" data-anchor-id="operaciones-inter-rangos">Operaciones inter-rangos</h3>
+<p>A diferencia de las operaciones intra-rangos, las operaciones inter-rangos trabajan sobre un conjunto de rangos, y el resultado depende de todos los rangos.</p>
+<p>Veamos cómo funcionan:</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-6_f56a2e8fa081c81b3558b21b11941cc5">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>rangos<span class="ot">&lt;-</span><span class="fu">IRanges</span>(<span class="at">start =</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">8</span>,<span class="dv">11</span>,<span class="dv">10</span>),<span class="at">end =</span> <span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">10</span>,<span class="dv">14</span>,<span class="dv">13</span>))</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mypar</span>(<span class="dv">6</span>,<span class="dv">1</span>)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plotRanges</span>(rangos,<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">15</span>))</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="fu">range</span>(rangos) <span class="co"># da el rango de inicio a fin de todos los rengos</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>IRanges object with 1 range and 0 metadata columns:
+          start       end     width
+      &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;
+  [1]         2        14        13</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotRanges</span>(<span class="fu">range</span>(rangos),<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">15</span>),<span class="at">col=</span><span class="st">"midnightblue"</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>IRanges<span class="sc">::</span><span class="fu">reduce</span>(rangos) <span class="co"># colapsa los rangos sobrepuestos en uno solo</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>IRanges object with 2 ranges and 0 metadata columns:
+          start       end     width
+      &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;
+  [1]         2         5         4
+  [2]         8        14         7</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotRanges</span>(IRanges<span class="sc">::</span><span class="fu">reduce</span>(rangos),<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">15</span>),<span class="at">col=</span><span class="st">"midnightblue"</span>)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="fu">gaps</span>(rangos) <span class="co"># retorna el rango que no cubre ningún rango</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>IRanges object with 1 range and 0 metadata columns:
+          start       end     width
+      &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;
+  [1]         6         7         2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotRanges</span>(<span class="fu">gaps</span>(rangos),<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">15</span>),<span class="at">col=</span><span class="st">"midnightblue"</span>)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="fu">disjoin</span>(rangos) <span class="co"># retorna el máximo número de rangos no sobrepuestos</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>IRanges object with 5 ranges and 0 metadata columns:
+          start       end     width
+      &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;
+  [1]         2         5         4
+  [2]         8         9         2
+  [3]        10        10         1
+  [4]        11        13         3
+  [5]        14        14         1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotRanges</span>(<span class="fu">disjoin</span>(rangos),<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">15</span>),<span class="at">col=</span><span class="st">"midnightblue"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="1440"></p>
+</div>
+</div>
+<p>Ahora que comprendemos las funciones básicas del paquete <code>IRanges</code>, es momento de identificar en qué se diferencia un rango y un rango genómico.</p>
+</section>
+</section>
+<section id="rangos-genómicos-1" class="level2">
+<h2 class="anchored" data-anchor-id="rangos-genómicos-1">Rangos genómicos</h2>
+<p>Los rangos genómicos adicionalmente a los rangos que hemos visto, contienen dos partes esenciales de información: el nombre del cromosoma y la direccionalidad de la hebra de ADN (+, - o * so no se especifica).</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-7_1f1155147a13e21d2faedb5446537452">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GenomicRanges)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Empecemos por crear tres rangos genómicos pertenecientes al cromosoma 21 de la especie <em>Homo sapiens</em>. Supogamos que estos rangos pertenecen al genoma GRCh38.p14 el cual es la anotación telómero a telómero. Cabe resaltar que éstos rangos son inventados ya que no estamos usando una base de datos real.</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-8_8f25314f17ac83e252821e362e8d00d0">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>gr<span class="ot">&lt;-</span><span class="fu">GRanges</span>(<span class="st">"chr21"</span>,<span class="fu">IRanges</span>(<span class="at">start =</span> <span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">12</span>,<span class="dv">14</span>),<span class="at">end=</span><span class="fu">c</span>(<span class="dv">25</span>,<span class="dv">31</span>,<span class="dv">40</span>)),</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">strand =</span> <span class="st">"+"</span>,<span class="at">seqlengths =</span> <span class="fu">c</span>(<span class="at">chr21=</span>100L))</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="fu">genome</span>(gr)<span class="ot">&lt;-</span><span class="st">"GRCh38.p14"</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>gr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>GRanges object with 3 ranges and 0 metadata columns:
+      seqnames    ranges strand
+         &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt;
+  [1]    chr21      5-25      +
+  [2]    chr21     12-31      +
+  [3]    chr21     14-40      +
+  -------
+  seqinfo: 1 sequence from GRCh38.p14 genome</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">seqnames</span>(gr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>factor-Rle of length 3 with 1 run
+  Lengths:     3
+  Values : chr21
+Levels(1): chr21</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">seqlengths</span>(gr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>chr21 
+  100 </code></pre>
+</div>
+</div>
+<p>Usemos las funciones de rangos sobre el rango genómico creado.</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-9_10ff655afba2e7e0ff79f6ba7a508800">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shift</span>(gr,<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>GRanges object with 3 ranges and 0 metadata columns:
+      seqnames    ranges strand
+         &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt;
+  [1]    chr21     15-35      +
+  [2]    chr21     22-41      +
+  [3]    chr21     24-50      +
+  -------
+  seqinfo: 1 sequence from GRCh38.p14 genome</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shift</span>(gr,<span class="dv">80</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>GRanges object with 3 ranges and 0 metadata columns:
+      seqnames    ranges strand
+         &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt;
+  [1]    chr21    85-105      +
+  [2]    chr21    92-111      +
+  [3]    chr21    94-120      +
+  -------
+  seqinfo: 1 sequence from GRCh38.p14 genome</code></pre>
+</div>
+</div>
+<p>Cuando usamos <code>shift()</code> con 80 pares de bases, los rangos sobrepasan la longitud del cromosoma que es 100. Para evitar que suceda esto usemos <code>trim()</code>.</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-10_ae167a2a5434ef5ddd4e2c0db38ab288">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">trim</span>(<span class="fu">shift</span>(gr,<span class="dv">80</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>GRanges object with 3 ranges and 0 metadata columns:
+      seqnames    ranges strand
+         &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt;
+  [1]    chr21    85-100      +
+  [2]    chr21    92-100      +
+  [3]    chr21    94-100      +
+  -------
+  seqinfo: 1 sequence from GRCh38.p14 genome</code></pre>
+</div>
+</div>
+<p>Finalmente, la clase <em>GRanges</em> noes permite adicionar columnas de metadata con la función <code>mcols()</code>.</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-11_d466f7f93f1f155d3e90af1aa75590be">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mcols</span>(gr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>DataFrame with 3 rows and 0 columns</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mcols</span>(gr)<span class="sc">$</span>value<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="fl">0.1</span>,<span class="fl">0.9</span>,<span class="fl">0.003</span>)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>gr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>GRanges object with 3 ranges and 1 metadata column:
+      seqnames    ranges strand |     value
+         &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;numeric&gt;
+  [1]    chr21      5-25      + |     0.100
+  [2]    chr21     12-31      + |     0.900
+  [3]    chr21     14-40      + |     0.003
+  -------
+  seqinfo: 1 sequence from GRCh38.p14 genome</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Incluso puede borrarse metadata</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mcols</span>(gr)<span class="sc">$</span>value<span class="ot">&lt;-</span><span class="cn">NULL</span></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>gr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>GRanges object with 3 ranges and 0 metadata columns:
+      seqnames    ranges strand
+         &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt;
+  [1]    chr21      5-25      +
+  [2]    chr21     12-31      +
+  [3]    chr21     14-40      +
+  -------
+  seqinfo: 1 sequence from GRCh38.p14 genome</code></pre>
+</div>
+</div>
+<p>En el siguiente artículo discutiremos más sobre la clase <em>GRanges</em>. Veremos la clase <em>GRangesList</em> donde formaremos listas de rangos genómicos, operaciones sobre estas listas, aplicaciones en datos reales y le daremos sentido biológico a las operaciones de la clase <em>IRanges</em>.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

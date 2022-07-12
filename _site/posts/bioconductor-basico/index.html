@@ -231,13 +231,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>“La misión del proyecto Bioconductor es desarrollar, apoyar y difundir software libre de código abierto que facilite el análisis riguroso y reproducible de datos de ensayos biológicos actuales y emergentes. Estamos dedicados a construir una comunidad diversa, colaborativa y acogedora de desarrolladores y científicos de datos.”</p>
 <p>Dicho en otras palabras, Bioconductor es similar al repositorio de paquetes de R, con la diferencia de que es un repositorio de <em>softwares</em> creado para el análisis de datos biológicos con enfoque en la reproducibilidad del análisis.</p>
 <p>Cabe resaltar que la reproducibilidad de resultados en biología es un reto y, tener <em>softwares</em> enfocados en ayudar a aliviar ese problema, es un gran avance para las ciencias biológicas.</p>
-<p>En fin, como ya te habrás percatado, este <em>post</em> es una pequeña introducción a los rangos genómicos asi que ¡vamos al asunto!</p>
+<p>En fin, como ya te habrás percatado por el título, este <em>post</em> es una pequeña introducción a los rangos genómicos asi que ¡vamos al asunto!</p>
 </section>
 <section id="rangos-genómicos" class="level2">
 <h2 class="anchored" data-anchor-id="rangos-genómicos">Rangos genómicos</h2>
 <p>Los pares de bases del ADN son enumerados del 1 hasta un número grande (podría ser más de 3 millones dependiendo de la especie). Estas enumeraciones nos ayudan a situarnos en regiones genómicas de interés como genes, regiones promotoras, regiones no codificantes, etc.</p>
 <p>Dicho esto, ya podemos definir qué es un rango genómico. Un rango genómico es simplemente una región del ADN delimitada por dos números enteros o “coordenadas genómicas” que son de un interés específico para el investigador.</p>
-<p>Ahora bien, trabajaremos esta introducción a los rangos genómicos con datos provenientes de un experimento de precipitación de inmuno cromatina (ChIP-Seq). Esta técnica tiene por objetivo secuenciar regiones específicas del genoma que son sitios de unión de proteínas como factores de transcripción.</p>
+<p>Ahora bien, trabajaremos esta serie de artículos a los rangos genómicos con datos inventados y con datos provenientes de un experimento de precipitación de inmuno cromatina (ChIP-Seq). Esta técnica tiene por objetivo secuenciar regiones específicas del genoma que son sitios de unión de proteínas como factores de transcripción.</p>
 <p>La pregunta siguiente sería: ¿Para qué nos sirve secuenciar éstas regiones? La respuesta dicha de manera resumida es: “depende”. Si lo sé, nada científico. Lo que sucede es que dependen del objetivo, por ejemplo: estudiar el cáncer de mama o efectos en el sabor del plátano. Para el caso del cáncer, es de interés encontrar a los <em>genes cercanos</em> a éstas regiones, ya que pueden ser motivo de tratamientos o cura. Es ahí donde entran los rangos genómicos al conocer la ubicación estas regiones cercanas a los genes.</p>
 <p>Antes de empezar a explorar los paquetes de Bioconductor, necesitamos instalarlos:</p>
 <p><code>BiocManager::install("IRanges")</code> <code>BiocManager::install("GenomicRanges")</code> <code>BiocManager::install("genomicsclass/ERBS")</code> <code>install_github("genomicsclass/ph525x")</code></p>
@@ -250,7 +250,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell" data-hash="index_cache/html/unnamed-chunk-1_88eace97bbf2ee73eea3a8b481af0203">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(IRanges) <span class="co"># carguemos el paquete</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>La primera función que estudiaremos es <code>IRanges()</code>. La función tiene tres argumentos principales: inicio (<em>start</em>), fin (<em>end</em>) y ancho (<em>width</em>). Por ejemplo, si definimos un rango <span class="math inline">\([8,14] = 8,9,10,11,12,13,14\)</span> tandrá un ancho o <em>width</em> de siete números.</p>
+<p>La primera función que estudiaremos es <code>IRanges()</code>. La función tiene tres argumentos principales: inicio (<em>start</em>), fin (<em>end</em>) y ancho (<em>width</em>). Por ejemplo, si definimos un rango <span class="math inline">\([8,14] = 8,9,10,11,12,13,14\)</span> este tendrá un ancho o <em>width</em> de siete números.</p>
 <div class="cell" data-hash="index_cache/html/unnamed-chunk-2_227765570ef3509bb752a667ac933e7a">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>rango<span class="ot">&lt;-</span> <span class="fu">IRanges</span>(<span class="dv">8</span>,<span class="dv">14</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>rango</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -524,7 +524,7 @@ Levels(1): chr21</code></pre>
   seqinfo: 1 sequence from GRCh38.p14 genome</code></pre>
 </div>
 </div>
-<p>En el siguiente artículo discutiremos más sobre la clase <em>GRanges</em>. Veremos la clase <em>GRangesList</em> donde formaremos listas de rangos genómicos, operaciones sobre estas listas, aplicaciones en datos reales y le daremos sentido biológico a las operaciones de la clase <em>IRanges</em>.</p>
+<p>En el siguiente artículo discutiremos más sobre la clase <em>GRanges</em>. Veremos la clase <em>GRangesList</em> donde formaremos listas de rangos genómicos, operaciones sobre estas listas, aplicaciones en datos reales de ChIP-Seq y le daremos sentido biológico a las operaciones de la clase <em>IRanges</em>.</p>
 
 
 </section>

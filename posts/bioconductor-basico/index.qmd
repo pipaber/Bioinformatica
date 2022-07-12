@@ -7,6 +7,9 @@ date: "2022-06-12"
 toc: true
 categories: [news, code, analysis, Bioconductor]
 image: "babyyoda.jpg"
+comments: 
+  giscus: 
+    repo: pipaber/Bioinformatica
 ---
 
 ```{r setup}

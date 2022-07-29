@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-0.9.483">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Piero Palacios Bernuy">
+<meta name="dcterms.date" content="2022-07-28">
+<meta name="description" content="Más sobre rangos genómicos y aplicaciones">
+
+<title>Bioinformatica - Bioconductor básico</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+<script src="..\..\site_libs\quarto-nav\quarto-nav.js"></script>
+<script src="..\..\site_libs\quarto-nav\headroom.min.js"></script>
+<script src="..\..\site_libs\clipboard\clipboard.min.js"></script>
+<script src="..\..\site_libs\quarto-search\autocomplete.umd.js"></script>
+<script src="..\..\site_libs\quarto-search\fuse.min.js"></script>
+<script src="..\..\site_libs\quarto-search\quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="..\..\site_libs\quarto-html\quarto.js"></script>
+<script src="..\..\site_libs\quarto-html\popper.min.js"></script>
+<script src="..\..\site_libs\quarto-html\tippy.umd.min.js"></script>
+<script src="..\..\site_libs\quarto-html\anchor.min.js"></script>
+<link href="..\..\site_libs\quarto-html\tippy.css" rel="stylesheet">
+<link href="..\..\site_libs\quarto-html\quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="..\..\site_libs\bootstrap\bootstrap.min.js"></script>
+<link href="..\..\site_libs\bootstrap\bootstrap-icons.css" rel="stylesheet">
+<link href="..\..\site_libs\bootstrap\bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Bioinformatica</span>
+  </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">Piero Palacios Bernuy</a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/pipaber?tab=repositories"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/piero-palacios-bernuy-30209087/"><i class="bi bi-linkedin" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Bioconductor básico</h1>
+            <p class="subtitle lead">Genomic Ranges</p>
+                  <div>
+        <div class="description">
+          Más sobre rangos genómicos y aplicaciones
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">news</div>
+                <div class="quarto-category">code</div>
+                <div class="quarto-category">analysis</div>
+                <div class="quarto-category">Bioconductor</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Piero Palacios Bernuy </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">July 28, 2022</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#bienvenidos" id="toc-bienvenidos" class="nav-link active" data-scroll-target="#bienvenidos">¡Bienvenidos!</a></li>
+  <li><a href="#listas-de-rangos-genónimos" id="toc-listas-de-rangos-genónimos" class="nav-link" data-scroll-target="#listas-de-rangos-genónimos">Listas de rangos genónimos</a></li>
+  <li><a href="#aplicación-en-datos-reales" id="toc-aplicación-en-datos-reales" class="nav-link" data-scroll-target="#aplicación-en-datos-reales">Aplicación en datos reales</a></li>
+  <li><a href="#más-datos-reales" id="toc-más-datos-reales" class="nav-link" data-scroll-target="#más-datos-reales">Más datos reales</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="bienvenidos" class="level2">
+<h2 class="anchored" data-anchor-id="bienvenidos">¡Bienvenidos!</h2>
+<p>Mi nombre es Piero Palacios, y esta es la segunda parte de una serie de publicaciones que se enfocarán en enseñar el uso de rangos genómicos en R. Puedes leer más acerca de mí en la sección: <a href="../../about.html">Acerca de mí</a>.</p>
+<p>En el <a href="../../posts/bioconductor-basico/index.html">artículo anterior</a> aprendimos sobre la clase <em>IRanges</em>, definimos que es un rango genómico, vimos cómo crear uno y aplicamos operaciones simples sobre éstos.</p>
+<p>Lo siguiente es aprender sobre la clase <em>GRangeList</em> así que empecemos.</p>
+</section>
+<section id="listas-de-rangos-genónimos" class="level2">
+<h2 class="anchored" data-anchor-id="listas-de-rangos-genónimos">Listas de rangos genónimos</h2>
+<p>Antes de empezar con los códigos, es momento de darle más contexto biológico a los rangos genómicos. Como hemos visto, un rango genómico es la coordenada de una <strong>secuencia</strong> de interés dentro del genoma.</p>
+<p>Si estas secuencias de interés son genes, es mucho más útil usar listas de rangos genómicos debido a que se pueden representar, de manera ordenada, grupos de interés dentro de cada gen; por ejemplo: listas de genes y dentro de cada gen, un objeto del tipo rango genómico en el cual están los exones.</p>
+<div id="fig-anonymous-1" class="quarto-figure quarto-figure-left anchored">
+<figure class="figure">
+<p><a href="http://www.biologia.arizona.edu/molecular_bio/problem_sets/mol_genetics_of_eukaryotes/08t.html"><img src="exones.png" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
+<p>Veamos un ejemplo para entender a qué nos referimos con grupos de interés dentro de cada gen.</p>
+<p>Primero creemos dos rangos genómicos:</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-1_5e2ac5e8ecd25f39a111e6cd26c4f6bb">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GenomicRanges)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>gr1<span class="ot">&lt;-</span><span class="fu">GRanges</span>(<span class="st">"chr21"</span>,<span class="fu">IRanges</span>(<span class="at">start =</span> <span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">12</span>,<span class="dv">14</span>),<span class="at">end=</span><span class="fu">c</span>(<span class="dv">25</span>,<span class="dv">31</span>,<span class="dv">40</span>)),</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">strand =</span> <span class="st">"+"</span>,<span class="at">seqlengths =</span> <span class="fu">c</span>(<span class="at">chr21=</span>100L))</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>gr2<span class="ot">&lt;-</span><span class="fu">GRanges</span>(<span class="st">"chr21"</span>,<span class="fu">IRanges</span>(<span class="at">start =</span> <span class="fu">c</span>(<span class="dv">27</span>,<span class="dv">30</span>),<span class="at">end=</span><span class="fu">c</span>(<span class="dv">40</span>,<span class="dv">60</span>)),</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">strand =</span> <span class="st">"+"</span>,<span class="at">seqlengths =</span> <span class="fu">c</span>(<span class="at">chr21=</span>100L))</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>grl<span class="ot">&lt;-</span><span class="fu">GRangesList</span>(gr1,gr2)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>grl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>GRangesList object of length 2:
+[[1]]
+GRanges object with 3 ranges and 0 metadata columns:
+      seqnames    ranges strand
+         &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt;
+  [1]    chr21      5-25      +
+  [2]    chr21     12-31      +
+  [3]    chr21     14-40      +
+  -------
+  seqinfo: 1 sequence from an unspecified genome
+
+[[2]]
+GRanges object with 2 ranges and 0 metadata columns:
+      seqnames    ranges strand
+         &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt;
+  [1]    chr21     27-40      +
+  [2]    chr21     30-60      +
+  -------
+  seqinfo: 1 sequence from an unspecified genome</code></pre>
+</div>
+</div>
+<p>Podemos entender a <code>grl</code> como una lista de dos <strong>genes</strong> o dos <strong>transcriptos</strong>, y dentro de cada gen o transcripto tenemos diferente cantidad de exones.</p>
+<p>Se puede ver la longitud de la lista, la cantidad de elementos dentro de cada elemento de la lista e incluso podemos escoger solo ver un elemento de la lista.</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-2_85a7468c20dc2c4ff8e231566c576dc6">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(grl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">elementNROWS</span>(grl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3 2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>grl[[<span class="dv">1</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>GRanges object with 3 ranges and 0 metadata columns:
+      seqnames    ranges strand
+         &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt;
+  [1]    chr21      5-25      +
+  [2]    chr21     12-31      +
+  [3]    chr21     14-40      +
+  -------
+  seqinfo: 1 sequence from an unspecified genome</code></pre>
+</div>
+</div>
+<p>También se puede agregar columnas de metadatos:</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-3_8afeffd403e01dad76c0fb2852ce17f8">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mcols</span>(grl)<span class="sc">$</span>values<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">5</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>grl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>GRangesList object of length 2:
+[[1]]
+GRanges object with 3 ranges and 0 metadata columns:
+      seqnames    ranges strand
+         &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt;
+  [1]    chr21      5-25      +
+  [2]    chr21     12-31      +
+  [3]    chr21     14-40      +
+  -------
+  seqinfo: 1 sequence from an unspecified genome
+
+[[2]]
+GRanges object with 2 ranges and 0 metadata columns:
+      seqnames    ranges strand
+         &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt;
+  [1]    chr21     27-40      +
+  [2]    chr21     30-60      +
+  -------
+  seqinfo: 1 sequence from an unspecified genome</code></pre>
+</div>
+</div>
+<p>Sin embargo, al escribir el objeto <code>grl</code> en la consola no muestra los metadatos. La forma correcta de verlos es usando la función <code>mcols()</code>.</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-4_6e5665567385a1ade697d5357afbdde5">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mcols</span>(grl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>DataFrame with 2 rows and 1 column
+     values
+  &lt;numeric&gt;
+1         4
+2         5</code></pre>
+</div>
+</div>
+<p>Una vez creados conjuntos de rangos genómicos o de listas de rangos genómicos, podría nacer esta pregunta: ¿Tienen rangos que se solapan?</p>
+<p>Para esta pregunta tenemos una función llamada <code>findOverlaps()</code>, que como dice el nombre, encuentra las secuencias que se solapan entre dos rangos o listas genómicas.</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-5_ca5e8fabee078116ca14edda966f78f5">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>ov<span class="ot">&lt;-</span><span class="fu">findOverlaps</span>(gr1,gr2)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>ov</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Hits object with 4 hits and 0 metadata columns:
+      queryHits subjectHits
+      &lt;integer&gt;   &lt;integer&gt;
+  [1]         2           1
+  [2]         2           2
+  [3]         3           1
+  [4]         3           2
+  -------
+  queryLength: 3 / subjectLength: 2</code></pre>
+</div>
+</div>
+<p>Lo que nos dice el objeto <code>ov</code> es por ejemplo: el segundo rango de <code>gr1</code> se solapa con el primer rango de <code>gr2</code>.</p>
+<p>Otra forma de hacer esta operación es con <code>%over%</code>. Esta operación nos retorna resultados lógicos del tipo <code>TRUE</code> o <code>FALSE</code> para el primer rango.</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-6_371b876407f3d06dfd7d0ab80bd8fd07">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>gr1 <span class="sc">%over%</span> gr2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE  TRUE  TRUE</code></pre>
+</div>
+</div>
+<p>Estos resultados lógicos nos permiten filtrar los rangos que se solapan de la siguiente manera:</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-7_712ab2bdf1da5bddb1894dbdb0303127">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>gr1[gr1 <span class="sc">%over%</span> gr2]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>GRanges object with 2 ranges and 0 metadata columns:
+      seqnames    ranges strand
+         &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt;
+  [1]    chr21     12-31      +
+  [2]    chr21     14-40      +
+  -------
+  seqinfo: 1 sequence from an unspecified genome</code></pre>
+</div>
+</div>
+<p>Hasta el momento sabemos crear rangos genómicos ya sea individuales o en listas y aprendimos sobre operaciones que se les pueden hacer a estos rangos. Ahora usemos los que aprendimos hasta ahora en datos reales de ChIP-Seq extraídos de células mamarias usadas para estudiar el cáncer de mama.</p>
+</section>
+<section id="aplicación-en-datos-reales" class="level2">
+<h2 class="anchored" data-anchor-id="aplicación-en-datos-reales">Aplicación en datos reales</h2>
+<p>Primero carguemos los datos de dos líneas celulares usadas para estudiar sitios de unión de proteínas receptoras de estrógeno:</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-8_0466fd22d0cc5513434bb90695b528d4">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ERBS)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"GM12878"</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"HepG2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Bien lo primero que podemos hacer es ver los metadatos y los rangos genómicos.</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-9_968c11acff7118d7fd553d6fda3c1346">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mcols</span>(HepG2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>DataFrame with 303 rows and 7 columns
+         name     score       col signalValue    pValue      qValue      peak
+    &lt;numeric&gt; &lt;integer&gt; &lt;logical&gt;   &lt;numeric&gt; &lt;numeric&gt;   &lt;numeric&gt; &lt;integer&gt;
+1          NA         0        NA      58.251    75.899 6.14371e-72       195
+2          NA         0        NA      10.808    69.685 5.02806e-66       321
+3          NA         0        NA      17.103    54.311 7.93067e-51       930
+4          NA         0        NA      12.427    43.855 1.35976e-40       604
+5          NA         0        NA      10.850    40.977 7.33386e-38       492
+...       ...       ...       ...         ...       ...         ...       ...
+299        NA         0        NA       9.681    10.057 1.42334e-08       402
+300        NA         0        NA       7.929    10.047 1.44208e-08       197
+301        NA         0        NA       5.864     9.990 1.63892e-08       227
+302        NA         0        NA       5.660     9.948 1.79941e-08       211
+303        NA         0        NA      13.211     9.918 1.92180e-08       163</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">granges</span>(HepG2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>GRanges object with 303 ranges and 0 metadata columns:
+        seqnames              ranges strand
+           &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt;
+    [1]     chr2   20335378-20335787      *
+    [2]    chr20       328285-329145      *
+    [3]     chr6 168135432-168136587      *
+    [4]    chr19     1244419-1245304      *
+    [5]    chr11   64071828-64073069      *
+    ...      ...                 ...    ...
+  [299]     chr4     1797182-1797852      *
+  [300]     chr1 110198573-110199126      *
+  [301]    chr17   17734052-17734469      *
+  [302]     chr1   48306453-48306908      *
+  [303]    chr12 123867207-123867554      *
+  -------
+  seqinfo: 93 sequences (1 circular) from hg19 genome</code></pre>
+</div>
+</div>
+<p>También se pueden hacer análisis exploratorios, por ejemplo hacer un histograma de el ancho de los rangos genómicos y ver el valor de la mediana:</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-10_6b7430eaa3a4e24a4aeb69466a4e0472">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>a<span class="ot">&lt;-</span><span class="fu">width</span>(<span class="fu">granges</span>(HepG2))</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>median_width<span class="ot">&lt;-</span><span class="fu">median</span>(a)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>median_width</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 560</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">as_tibble</span>(a)<span class="sc">%&gt;%</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>value))<span class="sc">+</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">fill=</span><span class="st">"midnightblue"</span>,<span class="at">color=</span><span class="st">"white"</span>,<span class="at">bins =</span> <span class="dv">25</span>)<span class="sc">+</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">element_text</span>(<span class="st">"Histograma del ancho de rangos genómicos"</span>),</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="st">"Ancho de rangos genómicos"</span>)<span class="sc">+</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>,<span class="at">face =</span> <span class="st">"bold"</span>))<span class="sc">+</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> median_width,<span class="at">colour=</span><span class="st">"red"</span>,<span class="at">size=</span><span class="fl">1.5</span>,<span class="at">lty=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="1440"></p>
+</div>
+</div>
+<p>Usemos la función <code>findOverlaps()</code> para buscar a las secuencias consenso (en común) que tienen las dos líneas celulares:</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-11_c61e180503e1e7c337b9fe748e3b2095">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>consenso<span class="ot">&lt;-</span><span class="fu">findOverlaps</span>(HepG2,GM12878)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>consenso</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Hits object with 75 hits and 0 metadata columns:
+       queryHits subjectHits
+       &lt;integer&gt;   &lt;integer&gt;
+   [1]         1          12
+   [2]         2          78
+   [3]         4         777
+   [4]         5           8
+   [5]         8          13
+   ...       ...         ...
+  [71]       285         621
+  [72]       287         174
+  [73]       291        1855
+  [74]       294         512
+  [75]       300         144
+  -------
+  queryLength: 303 / subjectLength: 1873</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>hepg2_consenso<span class="ot">&lt;-</span>HepG2[<span class="fu">queryHits</span>(consenso)]</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>hepg2_consenso</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>GRanges object with 75 ranges and 7 metadata columns:
+       seqnames              ranges strand |      name     score       col
+          &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt; | &lt;numeric&gt; &lt;integer&gt; &lt;logical&gt;
+   [1]     chr2   20335378-20335787      * |        NA         0      &lt;NA&gt;
+   [2]    chr20       328285-329145      * |        NA         0      &lt;NA&gt;
+   [3]    chr19     1244419-1245304      * |        NA         0      &lt;NA&gt;
+   [4]    chr11   64071828-64073069      * |        NA         0      &lt;NA&gt;
+   [5]     chr2   16938364-16938840      * |        NA         0      &lt;NA&gt;
+   ...      ...                 ...    ... .       ...       ...       ...
+  [71]    chr12 118558730-118559158      * |        NA         0      &lt;NA&gt;
+  [72]     chr1   35331750-35332300      * |        NA         0      &lt;NA&gt;
+  [73]     chr1   26146200-26147004      * |        NA         0      &lt;NA&gt;
+  [74]     chr6   44224657-44225693      * |        NA         0      &lt;NA&gt;
+  [75]     chr1 110198573-110199126      * |        NA         0      &lt;NA&gt;
+       signalValue    pValue      qValue      peak
+         &lt;numeric&gt; &lt;numeric&gt;   &lt;numeric&gt; &lt;integer&gt;
+   [1]      58.251    75.899 6.14371e-72       195
+   [2]      10.808    69.685 5.02806e-66       321
+   [3]      12.427    43.855 1.35976e-40       604
+   [4]      10.850    40.977 7.33386e-38       492
+   [5]      12.783    38.004 5.36029e-35       255
+   ...         ...       ...         ...       ...
+  [71]       8.292    10.294 8.59089e-09       195
+  [72]      10.458    10.233 9.81822e-09       341
+  [73]       5.742    10.176 1.10429e-08       337
+  [74]       3.525    10.102 1.29621e-08       838
+  [75]       7.929    10.047 1.44208e-08       197
+  -------
+  seqinfo: 93 sequences (1 circular) from hg19 genome</code></pre>
+</div>
+</div>
+<p>Se puede ver que sólo tienen 75 secuencias en común de sitios de unión de proteínas receptoras de estrógeno.</p>
+<p>Hemos encontrado regiones que se solapan entre las dos líneas celulares; sin embargo, también es de interés buscar regiones que estén cerca a los sitios de unión de las proteínas receptoras de estrógeno. ¿Por qué? Porque al ser dos líneas celulares diferentes, los sitios de unión también difieren. Veamos cómo hacer esto:</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-12_65b079f28ad7f2ffbe21e7bb8dbe793f">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>dist_prot<span class="ot">&lt;-</span><span class="fu">distanceToNearest</span>(HepG2,GM12878)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>dist_prot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Hits object with 303 hits and 1 metadata column:
+        queryHits subjectHits |  distance
+        &lt;integer&gt;   &lt;integer&gt; | &lt;integer&gt;
+    [1]         1          12 |         0
+    [2]         2          78 |         0
+    [3]         3         438 |    567101
+    [4]         4         777 |         0
+    [5]         5           8 |         0
+    ...       ...         ... .       ...
+  [299]       299        1260 |     58550
+  [300]       300         144 |         0
+  [301]       301         619 |    237981
+  [302]       302        1163 |   1491857
+  [303]       303         546 |     43816
+  -------
+  queryLength: 303 / subjectLength: 1873</code></pre>
+</div>
+</div>
+<p>Adicionalmente a lo que vimos con la función <code>findOverlaps()</code>; la función <code>distanceToNearest()</code> calcula la distancia de los solapamientos y de las regiones que no se solapan. Como te habrás dado cuenta los solapamientos tienen distancia de <strong>cero</strong> y, son 303 regiones que pertencen a las 303 regiones de la línea celular HepG2.</p>
+</section>
+<section id="más-datos-reales" class="level2">
+<h2 class="anchored" data-anchor-id="más-datos-reales">Más datos reales</h2>
+<p>Adicionalmente a los datos reales que hemos estado analizando, usaremos un objeto de anotación que contiene información sobre los genes del ser humano.</p>
+<p>La pregunta que podrías hacerte ahora es, ¿y a qué te refieres con un objeto de anotación?</p>
+<p>Bueno, una imagen habla más así que primero veámoslo y verás que se explica solo:</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-13_c6ea1182ebadc7bdcdcb450b8f8fa4fe">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Homo.sapiens)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>Homo.sapiens</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>OrganismDb Object:
+# Includes GODb Object:  GO.db 
+# With data about:  Gene Ontology 
+# Includes OrgDb Object:  org.Hs.eg.db 
+# Gene data about:  Homo sapiens 
+# Taxonomy Id:  9606 
+# Includes TxDb Object:  TxDb.Hsapiens.UCSC.hg19.knownGene 
+# Transcriptome data about:  Homo sapiens 
+# Based on genome:  hg19 
+# The OrgDb gene id ENTREZID is mapped to the TxDb gene id GENEID .</code></pre>
+</div>
+</div>
+<p>Como podrás ver, este objeto de anotación tiene información <strong>anotada</strong> de: Genes, Transcriptos (TxDb), el genoma en el que está basado (hg19), el código taxonómico e información de ontología de los genes.</p>
+<p>Puedes pensar en toda esta información almacenada en formato de tablas, a las que puedes acceder usando funciones específicas.</p>
+<p>Para empezar, en este <em>post</em> usaremos tres funciones que nos permitirán acceder a la información del objeto de anotación: <code>genes()</code>,<code>exnosBy()</code> y <code>select()</code> que como puedes intuir, extraen información sobre genes y exnoes. En artículos futuros ahondaremos más sobre los objetos de anotación, su creación y de la <em>GRAN</em> utilidad que tienen para acceder a la información genómica de interés.</p>
+<p>Empecemos viendo el resultado de la función <code>genes()</code>:</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-14_ca4a74ea679033080365faeeb571ce4b">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>genes_hs <span class="ot">&lt;-</span> <span class="fu">genes</span>(Homo.sapiens)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>genes_hs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>GRanges object with 23056 ranges and 1 metadata column:
+        seqnames              ranges strand |          GENEID
+           &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt; | &lt;CharacterList&gt;
+      1    chr19   58858172-58874214      - |               1
+     10     chr8   18248755-18258723      + |              10
+    100    chr20   43248163-43280376      - |             100
+   1000    chr18   25530930-25757445      - |            1000
+  10000     chr1 243651535-244006886      - |           10000
+    ...      ...                 ...    ... .             ...
+   9991     chr9 114979995-115095944      - |            9991
+   9992    chr21   35736323-35743440      + |            9992
+   9993    chr22   19023795-19109967      - |            9993
+   9994     chr6   90539619-90584155      + |            9994
+   9997    chr22   50961997-50964905      - |            9997
+  -------
+  seqinfo: 93 sequences (1 circular) from hg19 genome</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(genes_hs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 23056</code></pre>
+</div>
+</div>
+<p>Ahora puedes ver mucho más el por qué de la utilidad de los rangos genómicos. La anotación h19 del <em>Homo sapiens</em> cuenta con 23056 genes; específicamente podemos ver en qupe cromosoma se encuentran, sus coordenadas genómicas, el sentido en el que se encuentra y el código de identificación que poseen.</p>
+<p>También podemos ver a los exones por gen:</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-15_23141033a7683cb586c92663af8b3a64">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">exonsBy</span>(Homo.sapiens,<span class="at">by =</span> <span class="st">"gene"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>GRangesList object of length 23459:
+$`1`
+GRanges object with 15 ranges and 2 metadata columns:
+       seqnames            ranges strand |   exon_id   exon_name
+          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;character&gt;
+   [1]    chr19 58858172-58858395      - |    250809        &lt;NA&gt;
+   [2]    chr19 58858719-58859006      - |    250810        &lt;NA&gt;
+   [3]    chr19 58859832-58860494      - |    250811        &lt;NA&gt;
+   [4]    chr19 58860934-58862017      - |    250812        &lt;NA&gt;
+   [5]    chr19 58861736-58862017      - |    250813        &lt;NA&gt;
+   ...      ...               ...    ... .       ...         ...
+  [11]    chr19 58868951-58869015      - |    250821        &lt;NA&gt;
+  [12]    chr19 58869318-58869652      - |    250822        &lt;NA&gt;
+  [13]    chr19 58869855-58869951      - |    250823        &lt;NA&gt;
+  [14]    chr19 58870563-58870689      - |    250824        &lt;NA&gt;
+  [15]    chr19 58874043-58874214      - |    250825        &lt;NA&gt;
+  -------
+  seqinfo: 93 sequences (1 circular) from hg19 genome
+
+$`10`
+GRanges object with 2 ranges and 2 metadata columns:
+      seqnames            ranges strand |   exon_id   exon_name
+         &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;character&gt;
+  [1]     chr8 18248755-18248855      + |    113603        &lt;NA&gt;
+  [2]     chr8 18257508-18258723      + |    113604        &lt;NA&gt;
+  -------
+  seqinfo: 93 sequences (1 circular) from hg19 genome
+
+...
+&lt;23457 more elements&gt;</code></pre>
+</div>
+</div>
+<p>Hagamos otro histograma del ancho de los rangos genómicos, pero esta vez a los genes del humano.</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-16_6bc94d7fa4257b8d5a779ff72075536c">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>a<span class="ot">&lt;-</span><span class="fu">width</span>(genes_hs)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>median_width<span class="ot">&lt;-</span><span class="fu">median</span>(a)</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>median_width</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 20115.5</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">as_tibble</span>(a)<span class="sc">%&gt;%</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>value))<span class="sc">+</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">fill=</span><span class="st">"midnightblue"</span>,<span class="at">color=</span><span class="st">"white"</span>)<span class="sc">+</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">element_text</span>(<span class="st">"Histograma del ancho de rangos genómicos"</span>),</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="st">"Ancho de rangos genómicos"</span>)<span class="sc">+</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>,<span class="at">face =</span> <span class="st">"bold"</span>))<span class="sc">+</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> median_width,<span class="at">colour=</span><span class="st">"red"</span>,<span class="at">size=</span><span class="fl">1.5</span>,<span class="at">lty=</span><span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> median_width,<span class="at">colour=</span><span class="st">"red"</span>,<span class="at">size=</span><span class="fl">1.5</span>,<span class="at">lty=</span><span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">2.5e6</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="1440"></p>
+</div>
+</div>
+<p>Finalmente, la siguiente pregunta es, ¿y como relaciono los genes del ser humano con los datos de ChIP-Seq?</p>
+<p>La respuesta es simple, usando las funciones de solapamiento o similares. Puedes aprender más de ellas en la ayuda: <code>?distanceToNearest</code>.</p>
+<p>Para demostrar el uso de éstas funciones sobre el genoma humano primero encontremos los sitios de inicio de la transcripción de los genes con una de las funciones de rangos genómicos: <code>resize()</code>.</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-17_be88fbfcd9d2ead632927f6e65f9fdbb">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>sit<span class="ot">&lt;-</span><span class="fu">resize</span>(genes_hs,<span class="dv">1</span>)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>sit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>GRanges object with 23056 ranges and 1 metadata column:
+        seqnames    ranges strand |          GENEID
+           &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;CharacterList&gt;
+      1    chr19  58874214      - |               1
+     10     chr8  18248755      + |              10
+    100    chr20  43280376      - |             100
+   1000    chr18  25757445      - |            1000
+  10000     chr1 244006886      - |           10000
+    ...      ...       ...    ... .             ...
+   9991     chr9 115095944      - |            9991
+   9992    chr21  35736323      + |            9992
+   9993    chr22  19109967      - |            9993
+   9994     chr6  90539619      + |            9994
+   9997    chr22  50964905      - |            9997
+  -------
+  seqinfo: 93 sequences (1 circular) from hg19 genome</code></pre>
+</div>
+</div>
+<p>Es importante recordar que estas funciones dependen de la dirección en la que los genes se encuentran en la hebra doble del ADN.</p>
+<p>Bien, hecho esto lo que sigue es: buscar a las regiones de unión de las proteinas receptoras de estrógeno que estén cerca a genes.</p>
+<p>¿Cómo hacemos esto? Con la función <code>nearest()</code>.</p>
+<p>Enfoquémonos en las secuencias consenso de las dos líneas celulares. Estas ya la hallamos arriba y las guardamos como <code>hepg2_consenso</code>.</p>
+<p>Específicamente veamos a la cuarta región:</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-18_5d5cc78ad6e793a0f7fd12a253d60e0f">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>ind <span class="ot">&lt;-</span><span class="fu">nearest</span>(<span class="fu">granges</span>(hepg2_consenso)[<span class="dv">4</span>],sit)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>ind</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 6316</code></pre>
+</div>
+</div>
+<p>La cuarta región está cerca al gen 6316. Filtremos a este gen:</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-19_f45eb3d1211a8233c743c383d512e1a0">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>sit[ind]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>GRanges object with 1 range and 1 metadata column:
+       seqnames    ranges strand |          GENEID
+          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;CharacterList&gt;
+  2101    chr11  64073044      + |            2101
+  -------
+  seqinfo: 93 sequences (1 circular) from hg19 genome</code></pre>
+</div>
+</div>
+<p>Podemos ver que está en el cromosoma 11 y tiene el id del gen es 2101.</p>
+<p>Ahora, ¿cómo averiguamos el nombre y símbolo del gen? Bueno esto es sencillo debido a que el objeto de anotación cuenta con esta información. Veamos cómo obtener el nombre y símbolo del gen:</p>
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-20_2887e4111b3f8a3e5f15645b4b9cd2c7">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Extraemos el código de identificación</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>gen_de_interés<span class="ot">&lt;-</span><span class="fu">as.character</span>(<span class="fu">mcols</span>(sit)<span class="sc">$</span>GENEID[ind])</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(Homo.sapiens,<span class="at">keys =</span> gen_de_interés,<span class="at">keytype =</span> <span class="st">"GENEID"</span>,<span class="at">columns =</span> <span class="fu">c</span>(<span class="st">"SYMBOL"</span>,<span class="st">"GENENAME"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  GENEID                        GENENAME SYMBOL
+1   2101 estrogen related receptor alpha  ESRRA</code></pre>
+</div>
+</div>
+<p>Podemos ver que es un gen que tiene relación con la recepción de estrógeno, y ¡es lo que los investigadores buscaban al realizar el experimento de ChIP-Seq!</p>
+<p>En el siguiente artículo discutiremos el manejo de secuencias de ADN como obtener el contenido de guanina-citocina, y cómo obtener secuencias específicas de rangos genómicos; por ejemplo: obtener la secuencia de un gen de interés.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+<script src="https://giscus.app/client.js" data-repo="pipaber/Bioinformatica" data-repo-id="R_kgDOHfgatg" data-category="General" data-category-id="DIC_kwDOHfgats4CQKo1" data-mapping="title" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

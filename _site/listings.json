@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/GRanges List/index.html",
       "/posts/bioconductor-basico/index.html"
     ]
   }

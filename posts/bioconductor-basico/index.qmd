@@ -7,7 +7,6 @@ date: "2022-07-12"
 toc: true
 categories: [news, code, analysis, Bioconductor]
 image: "babyyoda.jpg"
-
 ---
 
 ```{r setup}
@@ -52,16 +51,13 @@ Los pares de bases del ADN son enumerados del 1 hasta un número grande (podría
 
 Dicho esto, ya podemos definir qué es un rango genómico. Un rango genómico es simplemente una región del ADN delimitada por dos números enteros o "coordenadas genómicas" que son de un interés específico para el investigador.
 
-Ahora bien, trabajaremos esta serie de artículos a los rangos genómicos con datos inventados y con datos provenientes de un experimento de precipitación de inmuno cromatina (ChIP-Seq). Esta técnica tiene por objetivo secuenciar regiones específicas del genoma que son sitios de unión de proteínas como factores de transcripción.
+Ahora bien, dedicaremos esta serie de artículos a los rangos genómicos con datos inventados y con datos provenientes de un experimento de precipitación de inmuno cromatina (ChIP-Seq). Esta técnica tiene por objetivo secuenciar regiones específicas del genoma que son sitios de unión de proteínas como factores de transcripción.
 
 La pregunta siguiente sería: ¿Para qué nos sirve secuenciar éstas regiones? La respuesta dicha de manera resumida es: "depende". Si lo sé, nada científico. Lo que sucede es que dependen del objetivo, por ejemplo: estudiar el cáncer de mama o efectos en el sabor del plátano. Para el caso del cáncer, es de interés encontrar a los *genes cercanos* a éstas regiones, ya que pueden ser motivo de tratamientos o cura. Es ahí donde entran los rangos genómicos al conocer la ubicación estas regiones cercanas a los genes.
 
 Antes de empezar a explorar los paquetes de Bioconductor, necesitamos instalarlos:
 
-`BiocManager::install("IRanges")` 
-`BiocManager::install("GenomicRanges")` 
-`BiocManager::install("genomicsclass/ERBS")`
-`install_github("genomicsclass/ph525x")`
+`BiocManager::install("IRanges")` `BiocManager::install("GenomicRanges")` `BiocManager::install("genomicsclass/ERBS")` `install_github("genomicsclass/ph525x")`
 
 En caso no tengas instalado Bioconductor, puedes instalarlo como lo mencionan en su página web: [Instalar bioconductor](https://www.bioconductor.org/install/)
 
@@ -85,6 +81,7 @@ rango
 ```
 
 Podemos extraer información como el inicio, el final y el ancho:
+
 ```{r}
 #| echo: true
 start(rango)
@@ -102,6 +99,7 @@ IRanges(start = c(2,4,7),end = c(10,15,14))
 ### Operaciones intra-rangos
 
 Las operaciones intra-rangos funcionan sobre cada rango de manera independiente.Entre las operaciones intra-rangos podemos mencionar a *narrow, shift, flank y resize*. Existen otras operaciones intra-rangos que pueden verse en la ayuda `?intra-range-methods`.
+
 ```{r}
 #| echo: true
 library(rafalib)
@@ -139,6 +137,7 @@ plotRanges(resize(rango,width = 1),xlim = c(1,18),col="midnightblue")
 A diferencia de las operaciones intra-rangos, las operaciones inter-rangos trabajan sobre un conjunto de rangos, y el resultado depende de todos los rangos.
 
 Veamos cómo funcionan:
+
 ```{r}
 #| echo: true
 
@@ -165,20 +164,18 @@ disjoin(rangos) # retorna el máximo número de rangos no sobrepuestos
 plotRanges(disjoin(rangos),xlim = c(0,15),col="midnightblue")
 ```
 
-
 Ahora que comprendemos las funciones básicas del paquete `IRanges`, es momento de identificar en qué se diferencia un rango y un rango genómico.
 
-## Rangos genómicos
+## GenomicRanges
 
-
-Los rangos genómicos adicionalmente a los rangos que hemos visto, contienen dos partes esenciales de información: el nombre del cromosoma y la direccionalidad de la hebra de ADN (+, - o * so no se especifica).
+Los rangos genómicos adicionalmente a los rangos que hemos visto, contienen dos partes esenciales de información: el nombre del cromosoma y la direccionalidad de la hebra de ADN (+, - o \* so no se especifica).
 
 ```{r}
 #| echo: true
 library(GenomicRanges)
 ```
 
-Empecemos por crear tres rangos genómicos pertenecientes al cromosoma 21 de la especie *Homo sapiens*. Supogamos que estos rangos pertenecen al genoma GRCh38.p14 el cual es la anotación telómero a telómero. Cabe resaltar que éstos rangos son inventados ya que no estamos usando una base de datos real.
+Empecemos por crear tres rangos genómicos pertenecientes al cromosoma 21 de la especie *Homo sapiens*. Supogamos que estos rangos pertenecen al genoma T2T-CHM13v2.0 el cual es la anotación telómero a telómero. Cabe resaltar que éstos rangos son inventados ya que no estamos usando una base de datos real.
 
 ```{r}
 #| echo: true
@@ -186,7 +183,7 @@ Empecemos por crear tres rangos genómicos pertenecientes al cromosoma 21 de la 
 gr<-GRanges("chr21",IRanges(start = c(5,12,14),end=c(25,31,40)),
             strand = "+",seqlengths = c(chr21=100L))
 
-genome(gr)<-"GRCh38.p14"
+genome(gr)<-"T2T-CHM13v2.0"
 
 gr
 
@@ -212,7 +209,7 @@ Cuando usamos `shift()` con 80 pares de bases, los rangos sobrepasan la longitud
 trim(shift(gr,80))
 ```
 
-Finalmente, la clase *GRanges* noes permite adicionar columnas de metadata con la función `mcols()`.
+Finalmente, la clase *GRanges* nos permite adicionar columnas de metadata con la función `mcols()`.
 
 ```{r}
 #| echo: true
@@ -232,9 +229,3 @@ gr
 ```
 
 En el siguiente artículo discutiremos más sobre la clase *GRanges*. Veremos la clase *GRangesList* donde formaremos listas de rangos genómicos, operaciones sobre estas listas, aplicaciones en datos reales de ChIP-Seq y le daremos sentido biológico a las operaciones de la clase *IRanges*.
-
-
-
-
-
-

@@ -1,0 +1,303 @@
+---
+title: "Bioconductor básico"
+subtitle: "Genomic Ranges"
+author: "Piero Palacios Bernuy"
+description: "Más sobre rangos genómicos y aplicaciones"
+date: "2022-07-28"
+toc: true
+categories: [news, code, analysis, Bioconductor]
+image: "babyyoda.jpg"
+---
+
+```{r setup}
+#| include: false
+knitr::opts_chunk$set(cache = TRUE, cache.lazy = FALSE, warning = FALSE,
+                      message = FALSE, echo = TRUE, dpi=180, fig.width = 8,
+                      fig.height = 5)
+
+library(knitr)
+library(tinytex)
+library(readr)
+library(tidyverse)
+library(purrr)
+library(janitor)
+library(silgelib)
+library(devtools)
+library(ph525x)
+theme_set(theme_minimal())
+```
+
+## ¡Bienvenidos!
+
+Mi nombre es Piero Palacios, y esta es la segunda parte de una serie de publicaciones que se enfocarán en enseñar el uso de rangos genómicos en R. Puedes leer más acerca de mí en la sección: [Acerca de mí](/about.qmd).
+
+En el [artículo anterior](/posts/bioconductor-basico/index.qmd) aprendimos sobre la clase *IRanges*, definimos que es un rango genómico, vimos cómo crear uno y aplicamos operaciones simples sobre éstos.
+
+Lo siguiente es aprender sobre la clase *GRangeList* así que empecemos.
+
+## Listas de rangos genónimos
+
+Antes de empezar con los códigos, es momento de darle más contexto biológico a los rangos genómicos. Como hemos visto, un rango genómico es la coordenada de una **secuencia** de interés dentro del genoma.
+
+Si estas secuencias de interés son genes, es mucho más útil usar listas de rangos genómicos debido a que se pueden representar, de manera ordenada, grupos de interés dentro de cada gen; por ejemplo: listas de genes y dentro de cada gen, un objeto del tipo rango genómico en el cual están los exones.
+
+[![](exones.png){fig-align="left"}                                           ](http://www.biologia.arizona.edu/molecular_bio/problem_sets/mol_genetics_of_eukaryotes/08t.html)
+
+Veamos un ejemplo para entender a qué nos referimos con grupos de interés dentro de cada gen.
+
+Primero creemos dos rangos genómicos:
+
+```{r}
+library(GenomicRanges)
+gr1<-GRanges("chr21",IRanges(start = c(5,12,14),end=c(25,31,40)),
+            strand = "+",seqlengths = c(chr21=100L))
+gr2<-GRanges("chr21",IRanges(start = c(27,30),end=c(40,60)),
+            strand = "+",seqlengths = c(chr21=100L))
+
+grl<-GRangesList(gr1,gr2)
+grl
+```
+
+Podemos entender a `grl` como una lista de dos **genes** o  dos **transcriptos**, y dentro de cada gen o transcripto tenemos diferente cantidad de exones.
+
+Se puede ver la longitud de la lista, la cantidad de elementos dentro de cada elemento de la lista e incluso podemos escoger solo ver un elemento de la lista.
+
+```{r}
+length(grl)
+
+elementNROWS(grl)
+
+grl[[1]]
+```
+
+También se puede agregar columnas de metadatos:
+
+```{r}
+mcols(grl)$values<-c(4,5)
+
+grl
+```
+
+Sin embargo, al escribir el objeto `grl` en la consola no muestra los metadatos. La forma correcta de verlos es usando la función `mcols()`.
+
+```{r}
+mcols(grl)
+```
+
+Una vez creados conjuntos de rangos genómicos o de listas de rangos genómicos, podría nacer esta pregunta: ¿Tienen rangos que se solapan?
+
+Para esta pregunta tenemos una función llamada `findOverlaps()`, que como dice el nombre, encuentra las secuencias que se solapan entre dos rangos o listas genómicas.
+
+```{r}
+ov<-findOverlaps(gr1,gr2)
+ov
+```
+Lo que nos dice el objeto `ov` es por ejemplo: el segundo rango de `gr1` se solapa con el primer rango de `gr2`.
+
+Otra forma de hacer esta operación es con `%over%`. Esta operación nos retorna resultados lógicos del tipo `TRUE` o `FALSE` para el primer rango.
+```{r}
+gr1 %over% gr2
+```
+Estos resultados lógicos nos permiten filtrar los rangos que se solapan de la siguiente manera:
+```{r}
+gr1[gr1 %over% gr2]
+```
+
+Hasta el momento sabemos crear rangos genómicos ya sea individuales o en listas y aprendimos sobre operaciones que se les pueden hacer a estos rangos. Ahora usemos los que aprendimos hasta ahora en datos reales de ChIP-Seq extraídos de células mamarias usadas para estudiar el cáncer de mama.
+
+## Aplicación en datos reales
+
+Primero carguemos los datos de dos líneas celulares usadas para estudiar sitios de unión de proteínas receptoras de estrógeno:
+```{r}
+library(ERBS)
+
+data("GM12878")
+data("HepG2")
+```
+
+Bien lo primero que podemos hacer es ver los metadatos y los rangos genómicos.
+
+```{r}
+mcols(HepG2)
+
+granges(HepG2)
+```
+
+También se pueden hacer análisis exploratorios, por ejemplo hacer un histograma de el ancho de los rangos genómicos y ver el valor de la mediana:
+
+```{r}
+a<-width(granges(HepG2))
+median_width<-median(a)
+median_width
+
+as_tibble(a)%>%
+  ggplot(aes(x=value))+
+  geom_histogram(fill="midnightblue",color="white",bins = 25)+
+  labs(title = element_text("Histograma del ancho de rangos genómicos"),
+       x="Ancho de rangos genómicos")+
+  theme(plot.title = element_text(hjust = 0.5,face = "bold"))+
+  geom_vline(xintercept = median_width,colour="red",size=1.5,lty=2)
+  
+```
+
+Usemos la función `findOverlaps()` para buscar a las secuencias consenso (en común) que tienen las dos líneas celulares:
+
+```{r}
+consenso<-findOverlaps(HepG2,GM12878)
+consenso
+
+hepg2_consenso<-HepG2[queryHits(consenso)]
+hepg2_consenso
+```
+
+Se puede ver que sólo tienen 75 secuencias en común de sitios de unión de proteínas receptoras de estrógeno.
+
+Hemos encontrado regiones que se solapan entre las dos líneas celulares; sin embargo, también es de interés buscar regiones que estén cerca a los sitios de unión de las proteínas receptoras de estrógeno. ¿Por qué? Porque al ser dos líneas celulares diferentes, los sitios de unión también difieren. Veamos cómo hacer esto:
+
+```{r}
+dist_prot<-distanceToNearest(HepG2,GM12878)
+dist_prot
+```
+Adicionalmente a lo que vimos con la función `findOverlaps()`; la función `distanceToNearest()` calcula la distancia de los solapamientos y de las regiones que no se solapan. Como te habrás dado cuenta los solapamientos tienen distancia de **cero** y, son 303 regiones que pertencen a las 303 regiones de la línea celular HepG2.
+
+
+## Más datos reales
+
+Adicionalmente a los datos reales que hemos estado analizando, usaremos un objeto de anotación que contiene información sobre los genes del ser humano.
+
+La pregunta que podrías hacerte ahora es, ¿y a qué te refieres con un objeto de anotación?
+
+Bueno, una imagen habla más así que primero veámoslo y verás que se explica solo:
+
+```{r}
+library(Homo.sapiens)
+
+Homo.sapiens
+```
+
+Como podrás ver, este objeto de anotación tiene información **anotada** de: Genes, Transcriptos (TxDb), el genoma en el que está basado (hg19), el código taxonómico e información de ontología de los genes.
+
+Puedes pensar en toda esta información almacenada en formato de tablas, a las que puedes acceder usando funciones específicas.
+
+Para empezar, en este *post* usaremos tres funciones que nos permitirán acceder a la información del objeto de anotación: `genes()`,`exnosBy()` y `select()` que como puedes intuir, extraen información sobre genes y exnoes. En artículos futuros ahondaremos más sobre los objetos de anotación, su creación y de la *GRAN* utilidad que tienen para acceder a la información genómica de interés. 
+
+Empecemos viendo el resultado de la función `genes()`:
+
+```{r}
+genes_hs <- genes(Homo.sapiens)
+genes_hs
+
+length(genes_hs)
+```
+Ahora puedes ver mucho más el por qué de la utilidad de los rangos genómicos. La anotación h19 del *Homo sapiens* cuenta con 23056 genes; específicamente podemos ver en qupe cromosoma se encuentran, sus coordenadas genómicas, el sentido en el que se encuentra y el código de identificación que poseen.
+
+También podemos ver a los exones por gen:
+```{r}
+exonsBy(Homo.sapiens,by = "gene")
+```
+
+Hagamos otro histograma del ancho de los rangos genómicos, pero esta vez a los genes del humano.
+
+```{r}
+a<-width(genes_hs)
+median_width<-median(a)
+median_width
+
+as_tibble(a)%>%
+  ggplot(aes(x=value))+
+  geom_histogram(fill="midnightblue",color="white")+
+  labs(title = element_text("Histograma del ancho de rangos genómicos"),
+       x="Ancho de rangos genómicos")+
+  theme(plot.title = element_text(hjust = 0.5,face = "bold"))+
+  geom_vline(xintercept = median_width,colour="red",size=1.5,lty=2)+
+  geom_vline(xintercept = median_width,colour="red",size=1.5,lty=2)+
+  coord_cartesian(xlim = c(0,2.5e6))
+```
+
+Finalmente, la siguiente pregunta es, ¿y como relaciono los genes del ser humano con los datos de ChIP-Seq?
+
+La respuesta es simple, usando las funciones de solapamiento o similares. Puedes aprender más de ellas en la ayuda: `?distanceToNearest`.
+
+Para demostrar el uso de éstas funciones sobre el genoma humano primero encontremos los sitios de inicio de la transcripción de los genes con una de las funciones de rangos genómicos: `resize()`.
+
+```{r}
+sit<-resize(genes_hs,1)
+sit
+```
+Es importante recordar que estas funciones dependen de la dirección en la que los genes se encuentran en la hebra doble del ADN.
+
+Bien, hecho esto lo que sigue es: buscar a las regiones de unión de las proteinas receptoras de estrógeno que estén cerca a genes.
+
+¿Cómo hacemos esto? Con la función `nearest()`.
+
+Enfoquémonos en las secuencias consenso de las dos líneas celulares. Estas ya la hallamos arriba y las guardamos como `hepg2_consenso`.
+
+Específicamente veamos a la cuarta región:
+
+```{r}
+ind <-nearest(granges(hepg2_consenso)[4],sit)
+ind
+```
+La cuarta región está cerca al gen 6316. Filtremos a este gen:
+
+```{r}
+sit[ind]
+```
+
+Podemos ver que está en el cromosoma 11 y tiene el id del gen es 2101.
+
+Ahora, ¿cómo averiguamos el nombre y símbolo del gen? Bueno esto es sencillo debido a que el objeto de anotación cuenta con esta información. Veamos cómo obtener el nombre y símbolo del gen:
+
+```{r}
+#Extraemos el código de identificación
+gen_de_interés<-as.character(mcols(sit)$GENEID[ind])
+
+select(Homo.sapiens,keys = gen_de_interés,keytype = "GENEID",columns = c("SYMBOL","GENENAME"))
+```
+
+Podemos ver que es un gen que tiene relación con la recepción de estrógeno, y ¡es lo que los investigadores buscaban al realizar el experimento de ChIP-Seq!
+
+En el siguiente artículo discutiremos el manejo de secuencias de ADN como obtener el contenido de guanina-citocina, y cómo obtener secuencias específicas de rangos genómicos; por ejemplo: obtener la secuencia de un gen de interés.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

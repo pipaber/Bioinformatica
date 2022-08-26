@@ -41,7 +41,7 @@ Antes de empezar con los códigos, es momento de darle más contexto biológico 
 
 Si estas secuencias de interés son genes, es mucho más útil usar listas de rangos genómicos debido a que se pueden representar, de manera ordenada, grupos de interés dentro de cada gen; por ejemplo: listas de genes y dentro de cada gen, un objeto del tipo rango genómico en el cual están los exones.
 
-[![](exones.png){fig-align="left"}                                           ](http://www.biologia.arizona.edu/molecular_bio/problem_sets/mol_genetics_of_eukaryotes/08t.html)
+[![](exones.png){fig-align="left"}](http://www.biologia.arizona.edu/molecular_bio/problem_sets/mol_genetics_of_eukaryotes/08t.html)
 
 Veamos un ejemplo para entender a qué nos referimos con grupos de interés dentro de cada gen.
 
@@ -58,7 +58,7 @@ grl<-GRangesList(gr1,gr2)
 grl
 ```
 
-Podemos entender a `grl` como una lista de dos **genes** o  dos **transcriptos**, y dentro de cada gen o transcripto tenemos diferente cantidad de exones.
+Podemos entender a `grl` como una lista de dos **genes** o dos **transcriptos**, y dentro de cada gen o transcripto tenemos diferente cantidad de exones.
 
 Se puede ver la longitud de la lista, la cantidad de elementos dentro de cada elemento de la lista e incluso podemos escoger solo ver un elemento de la lista.
 
@@ -92,13 +92,17 @@ Para esta pregunta tenemos una función llamada `findOverlaps()`, que como dice 
 ov<-findOverlaps(gr1,gr2)
 ov
 ```
+
 Lo que nos dice el objeto `ov` es por ejemplo: el segundo rango de `gr1` se solapa con el primer rango de `gr2`.
 
 Otra forma de hacer esta operación es con `%over%`. Esta operación nos retorna resultados lógicos del tipo `TRUE` o `FALSE` para el primer rango.
+
 ```{r}
 gr1 %over% gr2
 ```
+
 Estos resultados lógicos nos permiten filtrar los rangos que se solapan de la siguiente manera:
+
 ```{r}
 gr1[gr1 %over% gr2]
 ```
@@ -108,6 +112,7 @@ Hasta el momento sabemos crear rangos genómicos ya sea individuales o en listas
 ## Aplicación en datos reales
 
 Primero carguemos los datos de dos líneas celulares usadas para estudiar sitios de unión de proteínas receptoras de estrógeno:
+
 ```{r}
 library(ERBS)
 
@@ -158,8 +163,8 @@ Hemos encontrado regiones que se solapan entre las dos líneas celulares; sin em
 dist_prot<-distanceToNearest(HepG2,GM12878)
 dist_prot
 ```
-Adicionalmente a lo que vimos con la función `findOverlaps()`; la función `distanceToNearest()` calcula la distancia de los solapamientos y de las regiones que no se solapan. Como te habrás dado cuenta los solapamientos tienen distancia de **cero** y, son 303 regiones que pertencen a las 303 regiones de la línea celular HepG2.
 
+Adicionalmente a lo que vimos con la función `findOverlaps()`; la función `distanceToNearest()` calcula la distancia de los solapamientos y de las regiones que no se solapan. Como te habrás dado cuenta los solapamientos tienen distancia de **cero** y, son 303 regiones que pertencen a las 303 regiones de la línea celular HepG2.
 
 ## Más datos reales
 
@@ -179,7 +184,7 @@ Como podrás ver, este objeto de anotación tiene información **anotada** de: G
 
 Puedes pensar en toda esta información almacenada en formato de tablas, a las que puedes acceder usando funciones específicas.
 
-Para empezar, en este *post* usaremos tres funciones que nos permitirán acceder a la información del objeto de anotación: `genes()`,`exnosBy()` y `select()` que como puedes intuir, extraen información sobre genes y exnoes. En artículos futuros ahondaremos más sobre los objetos de anotación, su creación y de la *GRAN* utilidad que tienen para acceder a la información genómica de interés. 
+Para empezar, en este *post* usaremos tres funciones que nos permitirán acceder a la información del objeto de anotación: `genes()`,`exnosBy()` y `select()` que como puedes intuir, extraen información sobre genes y exnoes. En artículos futuros ahondaremos más sobre los objetos de anotación, su creación y de la *GRAN* utilidad que tienen para acceder a la información genómica de interés.
 
 Empecemos viendo el resultado de la función `genes()`:
 
@@ -189,9 +194,11 @@ genes_hs
 
 length(genes_hs)
 ```
+
 Ahora puedes ver mucho más el por qué de la utilidad de los rangos genómicos. La anotación h19 del *Homo sapiens* cuenta con 23056 genes; específicamente podemos ver en qupe cromosoma se encuentran, sus coordenadas genómicas, el sentido en el que se encuentra y el código de identificación que poseen.
 
 También podemos ver a los exones por gen:
+
 ```{r}
 exonsBy(Homo.sapiens,by = "gene")
 ```
@@ -224,6 +231,7 @@ Para demostrar el uso de éstas funciones sobre el genoma humano primero encontr
 sit<-resize(genes_hs,1)
 sit
 ```
+
 Es importante recordar que estas funciones dependen de la dirección en la que los genes se encuentran en la hebra doble del ADN.
 
 Bien, hecho esto lo que sigue es: buscar a las regiones de unión de las proteinas receptoras de estrógeno que estén cerca a genes.
@@ -238,6 +246,7 @@ Específicamente veamos a la cuarta región:
 ind <-nearest(granges(hepg2_consenso)[4],sit)
 ind
 ```
+
 La cuarta región está cerca al gen 6316. Filtremos a este gen:
 
 ```{r}
@@ -246,7 +255,7 @@ sit[ind]
 
 Podemos ver que está en el cromosoma 11 y tiene el id del gen es 2101.
 
-Ahora, ¿cómo averiguamos el nombre y símbolo del gen? Bueno esto es sencillo debido a que el objeto de anotación cuenta con esta información. Veamos cómo obtener el nombre y símbolo del gen:
+Ahora, ¿cómo averiguamos el nombre y símbolo del gen? Bueno esto es sencillo debido a que el objeto de anotación cuenta con esta información. Veamos cómo obtener el nombre y el símbolo del gen:
 
 ```{r}
 #Extraemos el código de identificación
@@ -258,46 +267,3 @@ select(Homo.sapiens,keys = gen_de_interés,keytype = "GENEID",columns = c("SYMBO
 Podemos ver que es un gen que tiene relación con la recepción de estrógeno, y ¡es lo que los investigadores buscaban al realizar el experimento de ChIP-Seq!
 
 En el siguiente artículo discutiremos el manejo de secuencias de ADN como obtener el contenido de guanina-citocina, y cómo obtener secuencias específicas de rangos genómicos; por ejemplo: obtener la secuencia de un gen de interés.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

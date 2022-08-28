@@ -10,6 +10,9 @@ website:
         href: https://github.com/pipaber?tab=repositories
       - icon: linkedin
         href: https://www.linkedin.com/in/piero-palacios-bernuy-30209087/
+      - text: Resume
+        href: https://github.com/pipaber/resume/blob/main/docs/index.pdf 
+      
 format:
   html:
     theme: superhero
